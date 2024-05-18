@@ -764,7 +764,7 @@ namespace KioskProject
 
             //creates and starts a process to run the LogTransaction program with arguments
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = @"C:\Users\Caleb\source\repos\LogTransaction\LogTransaction\bin\Debug\net8.0\LogTransaction.exe";
+            startInfo.FileName = @"C:\Users\Caleb\source\repos\KioskProject\LogTransaction\bin\Debug\net8.0\LogTransaction.exe";
             startInfo.Arguments = $"{arg1} \"{arg2}\" \"{arg3}\" {arg4} {arg5} {arg6} {arg7}";
             Process.Start(startInfo);
 
