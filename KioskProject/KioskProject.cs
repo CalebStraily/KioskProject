@@ -4,13 +4,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace KioskProject
 {
     internal class KioskProject
     {
         //declares a structure called Bank and its variables
-        public struct Kiosk
+        public class Kiosk
         {
             //FIELDS
             public int[] _currencyAmount;
@@ -375,7 +376,7 @@ namespace KioskProject
                         Console.WriteLine("Cash Back Credited: +${0:F2}", cashBack);
                         subTotal = totalCost + cashBack;
                         actualCashBack = decimal.Parse(transactionResultMessage);
-                        Console.WriteLine("Cash Back: -${0:F2}", actualCashBack);
+                        Console.WriteLine("Cash Back Received from Bank: -${0:F2}", actualCashBack);
                         subTotal -= actualCashBack;
                         Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                         Console.WriteLine("Subtotal: ${0:F2}", subTotal);
@@ -581,14 +582,20 @@ namespace KioskProject
                 {
                     if (!tester)
                     {
-                        Console.Write("Not a decimal number. Try Again.");
+                        Console.WriteLine("Input must be a nonnegative decimal number. Try Again.");
                     }
 
                     userInput = Console.ReadLine();
 
-                    Console.Clear();
-
                     tester = decimal.TryParse(userInput, out _);
+
+                    if (tester)
+                    {
+                        if (decimal.Parse(userInput) < 0)
+                        {
+                            tester = false;
+                        }
+                    }
 
                 } while (!tester);
 
@@ -607,21 +614,29 @@ namespace KioskProject
                 {
                     if (!tester)
                     {
-                        Console.Write("Not a valid number. Try Again.");
+                        Console.Write("Input must be a nonnegative decimal number. Try Again.");
                     }
 
                     userInput = Console.ReadLine();
 
-                    Console.Clear();
-
                     tester = double.TryParse(userInput, out _);
+
+                    if (tester)
+                    {
+                        if (decimal.Parse(userInput) < 0)
+                        {
+                            tester = false;
+                        }
+                    }
 
                 } while (!tester);
 
                 return long.Parse(userInput);
             }
             //END METHODS
-        }
+
+        }//END CLASS
+
         static void Main(string[] args)
         {
             //creates a customer objects that inherits the variables of the Kiosk class
@@ -669,6 +684,15 @@ namespace KioskProject
                         //attempts to convert user input to a double value type and sets the bool variable to true or false
                         validInput = double.TryParse(userInput, out _);
 
+                        //prevents input from being valid if the user entered a negative number
+                        if (validInput)
+                        {
+                            if (double.Parse(userInput) < 0)
+                            {
+                                validInput = false;
+                            }
+                        }
+
                         //if true, sets userInput to a double variable, adds the input to a list, adds to a running total, and sets repeat to true to move to the next item input
                         if (validInput == true)
                         {
@@ -683,9 +707,15 @@ namespace KioskProject
                         //if false, prompts the user that the input is not a decimal number and to reinput their variable
                         else if (validInput == false)
                         {
-                            Console.WriteLine("Not a decimal number. Try Again.");
+                            Console.WriteLine("Input must be a nonnegative decimal number. Try Again.");
                             Console.Write("Item " + count + ": $");
                             userInput = Console.ReadLine();
+
+                            if (userInput == "")
+                            {
+                                repeat = false;
+                                break;
+                            }
                         }
                     }
                     //resets the validInput to false to reuse in loop
