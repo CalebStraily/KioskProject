@@ -12,7 +12,7 @@ namespace KioskProject
         //declares a structure called Bank and its variables
         public struct Kiosk
         {
-            //fields
+            //FIELDS
             public int[] _currencyAmount;
             public int[] _userPayment;
             public string[] _currencyName;
@@ -27,7 +27,7 @@ namespace KioskProject
             public decimal _cardPayment;
             public decimal _changeGiven;
 
-            //constructors
+            //CONSTRUCTOR
             public Kiosk()
             {
                 _currencyAmount = new int[12];
@@ -43,12 +43,13 @@ namespace KioskProject
                 _cardPayment = 0;
                 _changeGiven = 0;
             }
+            //END CONSTRUCTOR
 
+            //GETTERS
             public int[] CurrencyAmount { get { return _currencyAmount; } }
             public int[] UserPayment { get { return _userPayment; } }
             public string[] CurrencyName { get { return _currencyName; } }
             public decimal[] CurrencyValue { get { return _currencyValue; } }
-       
             public DateTime Now { get { return _now; } }
             public string TransactionFilePath { get { return _transactionFilePath; } }
             public string TransactionNumberFilePath { get { return _transactionNumberFilePath; } }
@@ -56,7 +57,9 @@ namespace KioskProject
             public decimal SubTotal { get { return _subtotal; } }
             public decimal CardPayment { get { return _cardPayment; } }
             public decimal ChangeGiven { get { return _changeGiven; } }
+            //END GETTERS
 
+            //METHODS
             //sets all currency types to have an amount of 5
             public void InitializeKioskInventory()
             {
@@ -390,7 +393,7 @@ namespace KioskProject
                 } while (changePaymentMethod == true);
             }
 
-            //will dispense the change using a greedy algorithm, where the bills/coins used are from highest to lowest possible
+            //will dispense the change using a greedy algorithm, where the bills/coins dispensed are from highest to lowest possible
             public void DispenseChange(decimal changeDue, ref Kiosk kiosk)
             {
                 //rounds the change due so the statements will run correctly
@@ -440,7 +443,7 @@ namespace KioskProject
                 }
             }
 
-            //gets a series of payments in bills/coins to pay total expense on items
+            //gets a series of payments in bills/coins to pay the total expense on items
             public void CashTransaction(decimal totalCost, ref Kiosk kiosk)
             {
                 //declare variables
@@ -508,7 +511,7 @@ namespace KioskProject
                 Console.Clear();
             }
 
-            //simulates a request from funds from a banking account
+            //simulates a request for funds from a banking account
             public string[] MoneyRequest(string account_number, decimal amount)
             {
                 Random rnd = new Random();
@@ -617,11 +620,14 @@ namespace KioskProject
 
                 return long.Parse(userInput);
             }
+            //END METHODS
         }
         static void Main(string[] args)
         {
+            //creates a customer objects that inherits the variables of the Kiosk class
             Kiosk customer = new Kiosk();
 
+            //sets amounts of each currency type in the kiosk
             customer.InitializeKioskInventory();
             
             //declare variables
@@ -629,17 +635,18 @@ namespace KioskProject
             decimal convertedInput;
             decimal totalCost = 0;
             int count = 1;
-            bool repeat = false;
+            bool repeat;
             bool validInput = false;
 
             List<decimal> itemList = new List<decimal>();
 
             //welcomes the user to the program
-            Console.WriteLine("Welcome to Kiosk! Please enter the price of your items so that change can be dispensed.");
+            Console.WriteLine("Welcome to Kiosk checkout! Please enter the price of your items. \n" +
+                              "After all item prices are input, press the 'Enter' key while current item price input whitespace is empty to proceed to checkout.");
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Console.WriteLine();
 
-            //will run until the user enters null into the console
+            //will run until the user's response null/empty
             do
             {
                 //resets repeat to false to properly reuse the loop
@@ -652,6 +659,7 @@ namespace KioskProject
                 {
                     repeat = false;
                 }
+
                 //executes otherwise
                 else
                 {
@@ -688,6 +696,15 @@ namespace KioskProject
                 count++;
 
             } while (repeat == true);
+
+            //checks if the user did not input any items into the Kiosk and exits the program if this is true
+            if (totalCost == 0)
+            {
+                Console.Clear();
+                Console.WriteLine("No item prices were input into the Kiosk. \n"
+                                + "Cancelling transaction...");
+                Environment.Exit(-1);
+            }
 
             //prints out the total price of items and prompts the user to enter payments for their total
             Console.WriteLine("~~~~~~~~~~~~~~");
@@ -769,5 +786,7 @@ namespace KioskProject
             Process.Start(startInfo);
 
         }//END MAIN
-    }
-}
+
+    }//END CLASS
+
+}//END NAMESPACE

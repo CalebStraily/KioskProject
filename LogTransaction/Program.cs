@@ -146,7 +146,7 @@ namespace LogTransaction
             //executes only if the file exists or is reachable
             if (File.Exists(transactionFilePath))
             {
-                //reads in the contents of TransactionNumber.log
+                //reads in the contents of TransactionNumber.log and adds a new maxReportNumber
                 using (StreamReader reader = new StreamReader(transactionNumberFilePath))
                 {
                     //declare variables
@@ -165,6 +165,8 @@ namespace LogTransaction
 
                     //after the while loop, sets maxReportNumber to temp + 1
                     maxReportNumber = temp += 1;
+
+
                 }
 
                 //appends the max report number to the TransactionNumber.log
