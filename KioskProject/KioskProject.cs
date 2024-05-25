@@ -135,10 +135,13 @@ namespace KioskProject
                             {
                                 userDigitDoubled = userDigitsArray[i] * 2;
 
+                                //checks if the number at the current iteration multiplied by two more than one digit
                                 if (userDigitDoubled >= 10)
                                 {
+                                    //add the remainder of the number divided by 10, plus one to the running total
                                     runningTotal += (1 + (userDigitDoubled % 10));
                                 }
+                                //adds the number multiplied by two to the running total if it is a single digit number
                                 else if (userDigitDoubled < 10)
                                 {
                                     runningTotal += userDigitDoubled;
@@ -159,10 +162,13 @@ namespace KioskProject
                             {
                                 userDigitDoubled = userDigitsArray[i] * 2;
 
+                                //checks if the number at the current iteration multiplied by two more than one digit
                                 if (userDigitDoubled >= 10)
                                 {
+                                    //add the remainder of the number divided by 10, plus one to the running total
                                     runningTotal += (1 + (userDigitDoubled % 10));
                                 }
+                                //adds the number multiplied by two to the running total if it is a single digit number
                                 else if (userDigitDoubled < 10)
                                 {
                                     runningTotal += userDigitDoubled;
@@ -193,7 +199,7 @@ namespace KioskProject
                         }
                     } while (validCard == false);
 
-                    //sets a series of variables at specific digits of what the user has input
+                    //sets a series of variables at specific digits of what the user has input to determine the card vendor
                     int sixDigitUserInput = int.Parse(longUserInput.ToString().Substring(0, Math.Min(6, longUserInput.ToString().Length)));
                     int fourDigitUserInput = int.Parse(longUserInput.ToString().Substring(0, Math.Min(4, longUserInput.ToString().Length)));
                     int threeDigitUserInput = int.Parse(longUserInput.ToString().Substring(0, Math.Min(3, longUserInput.ToString().Length)));
@@ -459,6 +465,9 @@ namespace KioskProject
                 kiosk._cashPayment = totalCost;
                 kiosk._cardPayment = 0;
 
+                Console.WriteLine("Enter your payments for your total: ");
+                Console.WriteLine();
+
                 //will get user input while there is still total remaining to pay
                 do
                 {
@@ -639,7 +648,7 @@ namespace KioskProject
 
         static void Main(string[] args)
         {
-            //creates a customer objects that inherits the variables of the Kiosk class
+            //creates a customer object that inherits the variables of the Kiosk class
             Kiosk customer = new Kiosk();
 
             //sets amounts of each currency type in the kiosk
@@ -682,12 +691,12 @@ namespace KioskProject
                     while (validInput != true)
                     {
                         //attempts to convert user input to a double value type and sets the bool variable to true or false
-                        validInput = double.TryParse(userInput, out _);
+                        validInput = decimal.TryParse(userInput, out _);
 
                         //prevents input from being valid if the user entered a negative number
                         if (validInput)
                         {
-                            if (double.Parse(userInput) < 0)
+                            if (decimal.Parse(userInput) < 0)
                             {
                                 validInput = false;
                             }
@@ -704,7 +713,7 @@ namespace KioskProject
 
                             repeat = true;
                         }
-                        //if false, prompts the user that the input is not a decimal number and to reinput their variable
+                        //if false, prompts the user that the input is invalid and to reinput their variable
                         else if (validInput == false)
                         {
                             Console.WriteLine("Input must be a nonnegative decimal number. Try Again.");
@@ -747,7 +756,7 @@ namespace KioskProject
             Console.Clear();
 
             //prompts the user on which payment method they would like to use and stores input
-            userInput = customer.GetString("Would you like to pay with cash or a card?: ");
+            userInput = customer.GetString("Would you like to pay with cash or a card? (enter 'cancel' if no payment method is viable): ");
 
             Console.Clear();
 
@@ -758,17 +767,21 @@ namespace KioskProject
                 {
                     //executes when user enters card, case-insensitive
                     case var expression when (userInput.ToLower() == "card"):
-                        //proceeds to card payment function if the user wants to pay with card
+                        //proceeds to card payment method if the user wants to pay with card
                         customer.CardTransaction(totalCost, ref customer);
                         repeat = false;
                         break;
                     //executes when user enters cash, case-insensitive
                     case var expression when (userInput.ToLower() == "cash"):
-                        Console.WriteLine("Enter your payments for your total: ");
-                        Console.WriteLine();
-                        //runs a user payment function if the user wants to pay with cash
+                        //runs a user payment method if the user wants to pay with cash
                         customer.CashTransaction(totalCost, ref customer);
                         repeat = false;
+                        break;
+                    //executes when user enters cancel, case-insensitive
+                    case var expression when (userInput.ToLower() == "cancel"):
+                        //cancels the transaction by exiting the program
+                        Console.WriteLine("Cancelling transaction...");
+                        Environment.Exit(-1);
                         break;
                     //defaults to prompt the user to re-enter a valid value
                     default:
@@ -792,7 +805,7 @@ namespace KioskProject
             Console.ReadKey();
             Console.Clear();
             
-            //below process assigns a series of variables to multiple arguments in string format to send to program "LogTransaction to create/update a .log file for every transaction made at the kiosk
+            //below process assigns a series of variables to multiple arguments in string format to send to program "LogTransaction" to create/update a .log file for every transaction made at the kiosk
 
             //transaction number
             string arg1 = "1";
