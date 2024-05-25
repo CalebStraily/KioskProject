@@ -70,7 +70,6 @@ namespace LogTransaction
                                 cardPaymentAmount = args[i];
                                 cardPayment = decimal.Parse(cardPaymentAmount); 
                             }
-
                             break;
                         //assigns change given
                         case 6:
@@ -83,7 +82,6 @@ namespace LogTransaction
                             {
                                 changeGiven = args[i];
                             }
-
                             break;
                         default:
                             Console.WriteLine("Something went wrong with argument variable assignment.");
@@ -114,6 +112,7 @@ namespace LogTransaction
 
             switch (cardPaymentAmount)
             {
+                //adjusts format if there was not a card payment amount
                 case var expression when (cardPaymentAmount == "N/A"):
                     text = new string[]
                     {
@@ -126,6 +125,7 @@ namespace LogTransaction
                         "\tChange Given: $" + changeGiven
                     };
                     break;
+                //adjusts format if there was a card payment amount
                 case var expression when (cardPaymentAmount != "N/A"):
                     text = new string[]
                     {
@@ -185,6 +185,7 @@ namespace LogTransaction
 
                 switch (cardPaymentAmount)
                 {
+                    //adjusts format if there was not a card payment amount
                     case var expression when (cardPaymentAmount == "N/A"):
                         attrib = "\n\n\tTransaction Number: #" + maxReportNumber +
                                  "\n\tTransaction Date: " + transactionDate.ToString("MMM-dd-yy") +
@@ -194,6 +195,7 @@ namespace LogTransaction
                                  "\n\tPayment Amount (card): $" + cardPaymentAmount +
                                  "\n\tChange Given: $" + changeGiven;
                         break;
+                    //adjusts format if there was a card payment amount
                     case var expression when (cardPaymentAmount != "N/A"):
                         attrib = "\n\n\tTransaction Number: #" + maxReportNumber +
                                  "\n\tTransaction Date: " + transactionDate.ToString("MMM-dd-yy") +
@@ -242,6 +244,9 @@ namespace LogTransaction
                 }
             }
             //attempts to run its contents
-        }
-    }
-}
+
+        }//END MAIN
+
+    }//END CLASS
+
+}//END NAMESPACE
