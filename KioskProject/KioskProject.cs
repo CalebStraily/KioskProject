@@ -10,7 +10,7 @@ namespace KioskProject
 {
     internal class KioskProject
     {
-        //declares a structure called Bank and its variables
+        //declares a called called Kiosk and its variables
         public class Kiosk
         {
             //FIELDS
@@ -99,7 +99,8 @@ namespace KioskProject
                         Console.Clear();
 
                         //prompts the user to enter their card number and stores the value
-                        longUserInput = GetLong("Please enter your card number: ");
+                        longUserInput = GetLong("Input was not a valid card number. Try Again. \n" +
+                                                "Please enter your card number: ");
 
                         Console.Clear();
 
@@ -314,7 +315,7 @@ namespace KioskProject
                                 //will exit the program
                                 case var expression when (userInput.ToLower() == "cancel"):
                                     Console.Clear();
-                                    System.Environment.Exit(0);
+                                    System.Environment.Exit(-1);
                                     break;
                                 //defaults if input was not valid
                                 default:
@@ -356,6 +357,7 @@ namespace KioskProject
                                 //executes if the user want to cancel payment
                                 case var expression when (userInput.ToLower() == "cancel"):
                                     Console.Clear();
+                                    System.Environment.Exit(-1);
                                     return;
                                 //executes if the user's input was invalid
                                 default:
@@ -623,7 +625,9 @@ namespace KioskProject
                 {
                     if (!tester)
                     {
-                        Console.Write("Input must be a nonnegative decimal number. Try Again.");
+                        Console.Clear();
+                        Console.Write("Input was not a valid card number. Try Again. \n" +
+                                      "Please enter your card number: ");
                     }
 
                     userInput = Console.ReadLine();
@@ -781,7 +785,7 @@ namespace KioskProject
                     case var expression when (userInput.ToLower() == "cancel"):
                         //cancels the transaction by exiting the program
                         Console.WriteLine("Cancelling transaction...");
-                        Environment.Exit(-1);
+                        System.Environment.Exit(-1);
                         break;
                     //defaults to prompt the user to re-enter a valid value
                     default:
