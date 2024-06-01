@@ -14,19 +14,20 @@ namespace KioskProject
         public class Kiosk
         {
             //FIELDS
-            public int[] _currencyAmount;
-            public int[] _userPayment;
-            public string[] _currencyName;
-            public decimal[] _currencyValue;
-
             public DateTime _now;
-            public string _transactionFilePath;
-            public string _transactionNumberFilePath;
             public string _cardVendor;
-            public decimal _subtotal;
             public decimal _cashPayment;
             public decimal _cardPayment;
             public decimal _changeGiven;
+            
+            private int[] _currencyAmount;
+            private int[] _userPayment;
+            private string[] _currencyName;
+            private decimal[] _currencyValue;
+            private string _transactionFilePath;
+            private string _transactionNumberFilePath;
+            private decimal _subtotal;
+            
 
             //CONSTRUCTOR
             public Kiosk()
@@ -46,26 +47,12 @@ namespace KioskProject
             }
             //END CONSTRUCTOR
 
-            //GETTERS
-            public int[] CurrencyAmount { get { return _currencyAmount; } }
-            public int[] UserPayment { get { return _userPayment; } }
-            public string[] CurrencyName { get { return _currencyName; } }
-            public decimal[] CurrencyValue { get { return _currencyValue; } }
-            public DateTime Now { get { return _now; } }
-            public string TransactionFilePath { get { return _transactionFilePath; } }
-            public string TransactionNumberFilePath { get { return _transactionNumberFilePath; } }
-            public string CardVendor { get { return _cardVendor; } }
-            public decimal SubTotal { get { return _subtotal; } }
-            public decimal CardPayment { get { return _cardPayment; } }
-            public decimal ChangeGiven { get { return _changeGiven; } }
-            //END GETTERS
-
             //METHODS
             //sets all currency types to have an amount of 5
             public void InitializeKioskInventory()
             {
                 //repeat the length of int array currencyAmount
-                for (int i = 0; i < CurrencyAmount.Length; i++)
+                for (int i = 0; i < _currencyAmount.Length; i++)
                 {
                     _currencyAmount[i] = 5;
                 }
@@ -99,8 +86,7 @@ namespace KioskProject
                         Console.Clear();
 
                         //prompts the user to enter their card number and stores the value
-                        longUserInput = GetLong("Input was not a valid card number. Try Again. \n" +
-                                                "Please enter your card number: ");
+                        longUserInput = GetLong("Please enter your card number: ");
 
                         Console.Clear();
 
@@ -125,8 +111,6 @@ namespace KioskProject
                         {
                             userDigitsArray[i] = int.Parse(userInput[i].ToString());
                         }
-
-                        Console.WriteLine();
 
                         //runs if the number has an even amount of digits
                         if (digitCount % 2 == 0)
@@ -191,8 +175,11 @@ namespace KioskProject
                         //otherwise if the total is not divisible by 10, then the card is not valid
                         else if (runningTotal % 10 != 0)
                         {
-                            validCard = false;
                             Console.WriteLine("Error: Card number is invalid. Please re-enter your card number.");
+                            Console.WriteLine("Press any key to continue...");
+                            Console.ReadKey();
+
+                            validCard = false;
 
                             //resets the running total and digit count so the loop works properly
                             runningTotal = 0;
@@ -403,35 +390,35 @@ namespace KioskProject
             }
 
             //will dispense the change using a greedy algorithm, where the bills/coins dispensed are from highest to lowest possible
-            public void DispenseChange(decimal changeDue, ref Kiosk kiosk)
+            private void DispenseChange(decimal changeDue, ref Kiosk kiosk)
             {
                 //rounds the change due so the statements will run correctly
                 decimal changeDueRounded = Math.Round(changeDue, 2);
 
                 //repeats for each element of the currencyValue array
-                for (int i = 0; i < kiosk.CurrencyValue.Length; i++)
+                for (int i = 0; i < _currencyValue.Length; i++)
                 {
                     //executes if change due rounded is divisible
-                    if ((changeDueRounded / kiosk.CurrencyValue[i]) >= 1)
+                    if ((changeDueRounded / _currencyValue[i]) >= 1)
                     {
-                        switch (kiosk.CurrencyAmount[i])
+                        switch (_currencyAmount[i])
                         {
                             //executes if the currencyAmount at current index is greater than zero
-                            case var expression when (kiosk.CurrencyAmount[i] > 0):
+                            case var expression when (_currencyAmount[i] > 0):
 
                                 //loops while changeDueRounded is greater than zero AND changeDueRounded divided by current index of currencyValue is still greater than or equal to 1
-                                while (changeDueRounded > 0 && (changeDueRounded / kiosk.CurrencyValue[i]) >= 1)
+                                while (changeDueRounded > 0 && (changeDueRounded / _currencyValue[i]) >= 1)
                                 {
                                     //executes if changeDueRounded minus current index of currencyValue is positive or zero
-                                    if ((changeDueRounded - kiosk.CurrencyValue[i]) >= 0)
+                                    if ((changeDueRounded - _currencyValue[i]) >= 0)
                                     {
                                         //subtracts current index of currencyValue from changeDue outputs that the current index of currencyValue was dispensed
-                                        changeDue -= kiosk.CurrencyValue[i];
-                                        Console.WriteLine("${0:F2} dispensed.", kiosk.CurrencyValue[i]);
+                                        changeDue -= _currencyValue[i];
+                                        Console.WriteLine("${0:F2} dispensed.", _currencyValue[i]);
                                         //add to a running to for change given to the customer
-                                        kiosk._changeGiven += kiosk.CurrencyValue[i];
+                                        kiosk._changeGiven += _currencyValue[i];
                                         //deducts the bill/coin taken from kiosk to give customer their change
-                                        kiosk.CurrencyAmount[i]--;
+                                        _currencyAmount[i]--;
                                     }
 
                                     //rounds change again after new calculations have been made
@@ -445,7 +432,6 @@ namespace KioskProject
                                 Console.WriteLine("Error: the kiosk does not have enough physical money to supply your change.");
                                 Console.WriteLine("Please use another method of payment.");
                                 Console.WriteLine("Cancelling transaction...");
-                                RefundTransaction(kiosk);
                                 return;
                         }
                     }
@@ -473,6 +459,11 @@ namespace KioskProject
                 //will get user input while there is still total remaining to pay
                 do
                 {
+
+                    Console.Clear();
+
+                    Console.WriteLine("Remaining: ${0:F2}", totalRemaining);
+
                     //gets a payment amount from the user
                     userPayment = GetDecimal("Payment " + count + ": $");
 
@@ -481,9 +472,9 @@ namespace KioskProject
                     {
                         validCurrencyValue = false;
 
-                        for (int i = 0; i < kiosk.CurrencyValue.Length; i++)
+                        for (int i = 0; i < _currencyValue.Length; i++)
                         {
-                            if (userPayment == kiosk.CurrencyValue[i])
+                            if (userPayment == _currencyValue[i])
                             {
                                 validCurrencyValue = true;
 
@@ -501,8 +492,12 @@ namespace KioskProject
 
                         if (validCurrencyValue == false)
                         {
-                            userPayment = GetDecimal("Please enter a valid currency value.\n" +
-                                                     "Payment " + count + ": $");
+                            Console.Clear();
+
+                            Console.WriteLine("Please enter a valid currency value.");
+                            Console.WriteLine("Remaining: ${0:F2}", totalRemaining);
+
+                            userPayment = GetDecimal("Payment " + count + ": $");
                         }
 
                     } while (validCurrencyValue == false);
@@ -524,7 +519,7 @@ namespace KioskProject
             }
 
             //simulates a request for funds from a banking account
-            public string[] MoneyRequest(string account_number, decimal amount)
+            static string[] MoneyRequest(string account_number, decimal amount)
             {
                 Random rnd = new Random();
                 //50% CHANCE TRANSACTION PASSES OR FAILS
@@ -552,21 +547,49 @@ namespace KioskProject
 
             }//end if
 
-            //refunds the transactions made by the user
-            public void RefundTransaction(Kiosk kiosk)
+            //outputs a post transaction kiosk report to the console
+            public void KioskInventoryReport()
             {
-                //loops for each index of the userPayment array and removes bills from the kiosk for every bill input by the user
-                for (int i = 0; i < kiosk.UserPayment.Length; i++)
+                //prints out a post transaction kio inventory report
+                Console.WriteLine("Post Transaction Kiosk Inventory Report: ");
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                Console.WriteLine();
+
+                //loops the length of the currencyAmount array and outputs the amount of money in the kiosk
+                for (int i = 0; i < _currencyAmount.Length; i++)
                 {
-                    switch (kiosk.UserPayment)
-                    {
-                        case var expression when (kiosk.UserPayment[i] > 0):
-
-                            kiosk.CurrencyAmount[i] -= kiosk.UserPayment[i];
-
-                            break;
-                    }
+                    Console.WriteLine("Amount of " + _currencyName[i] + " in kiosk: " + _currencyAmount[i]);
                 }
+
+                Console.ReadKey();
+                Console.Clear();
+            }
+
+            //calls a separate program to log the transaction made by the customer
+            public void LogTransaction()
+            {
+                //below process assigns a series of variables to multiple arguments in string format to send to program "LogTransaction" to create/update a .log file for every transaction made at the kiosk
+
+                //transaction number
+                string arg1 = "1";
+                //transaction date
+                string arg2 = _now.ToShortDateString();
+                //transaction time
+                string arg3 = _now.ToShortTimeString();
+                //payment amount (cash)
+                string arg4 = _cashPayment.ToString();
+                //card vendor
+                string arg5 = _cardVendor.ToString();
+                //payment amount (card)
+                string arg6 = _cardPayment.ToString();
+                //change given
+                string arg7 = _changeGiven.ToString();
+
+                //creates and starts a process to run the LogTransaction program with arguments
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.FileName = @"C:\Users\Caleb\source\repos\KioskProject\LogTransaction\bin\Debug\net8.0\LogTransaction.exe";
+                startInfo.Arguments = $"{arg1} \"{arg2}\" \"{arg3}\" {arg4} {arg5} {arg6} {arg7}";
+                Process.Start(startInfo);
             }
 
             //receives user input of string type variables
@@ -705,7 +728,6 @@ namespace KioskProject
                                 validInput = false;
                             }
                         }
-
                         //if true, sets userInput to a double variable, adds the input to a list, adds to a running total, and sets repeat to true to move to the next item input
                         if (validInput == true)
                         {
@@ -789,48 +811,18 @@ namespace KioskProject
                         break;
                     //defaults to prompt the user to re-enter a valid value
                     default:
+                        Console.Clear();
                         userInput = customer.GetString("Please enter a valid payment method (cash/card): ");
                         repeat = true;
                         break;
                 }
             } while (repeat == true);
 
-            //prints out a post transaction kio inventory report
-            Console.WriteLine("Post Transaction Kiosk Inventory Report: ");
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            Console.WriteLine();
+            //calls a method to output a post transaction kiosk inventory report to show the change in cash flow after the customer transaction
+            customer.KioskInventoryReport();
 
-            //loops the length of the currencyAmount array and outputs the amount of money in the kiosk
-            for (int i = 0; i < customer.CurrencyAmount.Length; i++)
-            {
-                Console.WriteLine("Amount of " + customer.CurrencyName[i] + " in kiosk: " + customer.CurrencyAmount[i]);
-            }
-
-            Console.ReadKey();
-            Console.Clear();
-            
-            //below process assigns a series of variables to multiple arguments in string format to send to program "LogTransaction" to create/update a .log file for every transaction made at the kiosk
-
-            //transaction number
-            string arg1 = "1";
-            //transaction date
-            string arg2 = customer._now.ToShortDateString();
-            //transaction time
-            string arg3 = customer._now.ToShortTimeString();
-            //payment amount (cash)
-            string arg4 = customer._cashPayment.ToString();
-            //card vendor
-            string arg5 = customer._cardVendor.ToString();
-            //payment amount (card)
-            string arg6 = customer._cardPayment.ToString();
-            //change given
-            string arg7 = customer._changeGiven.ToString();
-
-            //creates and starts a process to run the LogTransaction program with arguments
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = @"C:\Users\Caleb\source\repos\KioskProject\LogTransaction\bin\Debug\net8.0\LogTransaction.exe";
-            startInfo.Arguments = $"{arg1} \"{arg2}\" \"{arg3}\" {arg4} {arg5} {arg6} {arg7}";
-            Process.Start(startInfo);
+            //starts a separate program and passes arguments to be used in the program for logging the transaction
+            customer.LogTransaction();
 
         }//END MAIN
 

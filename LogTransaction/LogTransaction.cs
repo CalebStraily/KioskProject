@@ -2,7 +2,7 @@
 
 namespace LogTransaction
 {
-    internal class Program
+    internal class LogTransaction
     {
         static void Main(string[] args)
         {
@@ -165,8 +165,6 @@ namespace LogTransaction
 
                     //after the while loop, sets maxReportNumber to temp + 1
                     maxReportNumber = temp += 1;
-
-
                 }
 
                 //appends the max report number to the TransactionNumber.log
