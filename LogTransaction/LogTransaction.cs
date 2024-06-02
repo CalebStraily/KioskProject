@@ -6,6 +6,9 @@ namespace LogTransaction
     {
         static void Main(string[] args)
         {
+
+            //args = new string[] {"1", "6/2/2024", "5:54 PM", "0", "American Express", "3.99", "0" };
+
             //declare variables
             int maxReportNumber;
             decimal cardPayment = 0;
@@ -53,6 +56,10 @@ namespace LogTransaction
                             if (args[i] == "0")
                             {
                                 cardVendor = "N/A";
+                            }
+                            else if (args[i] == "AmericanExpress")
+                            {
+                                cardVendor = "American Express";
                             }
                             else
                             {
