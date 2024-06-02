@@ -21,27 +21,18 @@ namespace KioskProject
             public decimal _changeGiven;
             
             private int[] _currencyAmount;
-            private int[] _userPayment;
             private string[] _currencyName;
             private decimal[] _currencyValue;
-            private string _transactionFilePath;
-            private string _transactionNumberFilePath;
-            private decimal _subtotal;
-            
 
             //CONSTRUCTOR
             public Kiosk()
             {
                 _currencyAmount = new int[12];
-                _userPayment = new int[12];
                 _currencyName = new string[] {"Hundreds", "Fifties", "Twenties", "Tens", "Fives", "Twos",
                                               "Ones", "Half-Dollar", "Quarters", "Dimes", "Nickels", "Pennies"};
                 _currencyValue = new decimal[] { 100, 50, 20, 10, 5, 2, 1, .50M, .25M, .10M, .05M, .01M };
                 _now = DateTime.Now;
-                _transactionFilePath = "C:\\Users\\Caleb\\Desktop\\Visual Studio Files\\" + _now.ToString("MMM-dd-yy") + "-Transactions.log";
-                _transactionNumberFilePath = "C:\\Users\\Caleb\\Desktop\\Visual Studio Files\\TransactionNumber.log";
                 _cardVendor = "0";
-                _subtotal = 0;
                 _cardPayment = 0;
                 _changeGiven = 0;
             }
@@ -78,17 +69,23 @@ namespace KioskProject
                 do
                 {
                     //resets changePaymentMethod to false to loop properly
+
                     changePaymentMethod = false;
 
                     //will repeat while the card is not a valid value
                     do
                     {
+                        
+                        digitCount = 0;
+                        
                         Console.Clear();
 
                         //prompts the user to enter their card number and stores the value
                         longUserInput = GetLong("Please enter your card number: ");
 
                         Console.Clear();
+
+                        
 
                         //counts how many digits the user's input is
                         for (long i = longUserInput; i > 0; i = i / 10)
@@ -211,7 +208,7 @@ namespace KioskProject
                         //checks if the digits are within the parameters for an American card
                         case var expression when (twoDigitUserInput >= 34 && twoDigitUserInput <= 37 && digitCount == 15):
                             Console.WriteLine("Card accepted: your card is an American Express card.");
-                            _cardVendor = "American Express";
+                            _cardVendor = "AmericanExpress";
                             break;
                         //checks if the digits are within the parameters for a Discover card
                         case var expression when (oneDigitUserInput == 4 && digitCount >= 13 && digitCount <= 16):
@@ -242,7 +239,7 @@ namespace KioskProject
                                 wantsCashBack = false;
                                 break;
                             default:
-                                userInput = GetString("Please type a valid response: ");
+                                userInput = GetString("Please type a valid response. Do you want cash back (yes/no): ");
                                 Console.Clear();
                                 repeat = true;
                                 break;
@@ -356,7 +353,7 @@ namespace KioskProject
                             //repeats while user input is not 'retry' or 'cash'
                         } while (repeat == true);
                     }
-                    //executes if the user's card payment is approved
+                    //executes if the user's card payment is accepted
                     else
                     {
                         //declare variables
@@ -389,7 +386,7 @@ namespace KioskProject
                 } while (changePaymentMethod == true);
             }
 
-            //will dispense the change using a greedy algorithm, where the bills/coins dispensed are from highest to lowest possible
+            //will dispense the change using a greedy algorithm, where the bills/coins dispensed are from the highest to lowest possible value
             private void DispenseChange(decimal changeDue, ref Kiosk kiosk)
             {
                 //rounds the change due so the statements will run correctly
@@ -584,6 +581,8 @@ namespace KioskProject
                 string arg6 = _cardPayment.ToString();
                 //change given
                 string arg7 = _changeGiven.ToString();
+
+
 
                 //creates and starts a process to run the LogTransaction program with arguments
                 ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -812,7 +811,7 @@ namespace KioskProject
                     //defaults to prompt the user to re-enter a valid value
                     default:
                         Console.Clear();
-                        userInput = customer.GetString("Please enter a valid payment method (cash/card): ");
+                        userInput = customer.GetString("Please enter a valid input (card/cash/cancel): ");
                         repeat = true;
                         break;
                 }
