@@ -192,8 +192,8 @@ namespace KioskProject
                     {
                         //checks if the digits are within the parameters for a discover card
                         case var expression when (sixDigitUserInput >= 622126 && sixDigitUserInput <= 622925 || threeDigitUserInput >= 644 && threeDigitUserInput <= 649 || fourDigitUserInput == 6011 || twoDigitUserInput == 65 && digitCount == 16):
-                            Console.WriteLine("Card accepted: your card is a Discover Card.");
-                            _cardVendor = "Discover Card";
+                            Console.WriteLine("Card accepted: your card is a Discover card.");
+                            _cardVendor = "Discover";
                             break;
                         //checks if the digits are within the parameters for a MasterCard
                         case var expression when (twoDigitUserInput >= 51 && twoDigitUserInput <= 55 && digitCount == 16):
@@ -353,15 +353,33 @@ namespace KioskProject
                         //declare variables
                         decimal subTotal;
                         decimal actualCashBack;
+                        bool changeDuePossible;
 
                         Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                        DispenseChange(cashBack, ref kiosk);
+                        
+                        //sets a boolean variable to true or false depending on if the kiosk has can credit change due to the customer
+                        changeDuePossible = DispenseChange(cashBack, ref kiosk);
+
+                        //sets cashBack and _changeGiven back to zero if crediting change due is not possible
+                        if (changeDuePossible == false)
+                        {
+                            cashBack = 0;
+                            _changeGiven = 0;
+                        }
+
                         Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                         Console.WriteLine("Account Number: " + accountNumberResult);
                         Console.WriteLine("Total: +${0:F2}", totalCost);
                         Console.WriteLine("Cash Back Credited: +${0:F2}", cashBack);
                         subTotal = totalCost + cashBack;
                         actualCashBack = decimal.Parse(transactionResultMessage);
+
+                        //sets actualCashBack back to zero if crediting change due is not possible
+                        if (changeDuePossible == false)
+                        {
+                            actualCashBack = 0;
+                        }
+
                         Console.WriteLine("Cash Back Received from Bank: -${0:F2}", actualCashBack);
                         subTotal -= actualCashBack;
                         Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -380,15 +398,19 @@ namespace KioskProject
             }
 
             //will dispense the change using a greedy algorithm, where the bills/coins dispensed are from the highest to lowest possible value
-            private void DispenseChange(decimal changeDue, ref Kiosk kiosk)
+            private bool DispenseChange(decimal changeDue, ref Kiosk kiosk)
             {
+                string userInput = "";
+                bool repeat = false;
+                bool changeDuePossible = false;
+
                 //rounds the change due so the statements will run correctly
                 decimal changeDueRounded = Math.Round(changeDue, 2);
 
                 //repeats for each element of the currencyValue array
                 for (int i = 0; i < _currencyValue.Length; i++)
                 {
-                    //executes if change due rounded is divisible
+                    //executes if change due rounded is divisible by the current currency value
                     if ((changeDueRounded / _currencyValue[i]) >= 1)
                     {
                         switch (_currencyAmount[i])
@@ -396,8 +418,10 @@ namespace KioskProject
                             //executes if the currencyAmount at current index is greater than zero
                             case var expression when (_currencyAmount[i] > 0):
 
-                                //loops while changeDueRounded is greater than zero AND changeDueRounded divided by current index of currencyValue is still greater than or equal to 1
-                                while (changeDueRounded > 0 && (changeDueRounded / _currencyValue[i]) >= 1)
+                                //loops while changeDueRounded is greater than zero
+                                //AND changeDueRounded divided by current index of currencyValue is still greater than or equal to 1
+                                //AND there are still bills/coins that are distributable within the kiosk
+                                while (changeDueRounded > 0 && (changeDueRounded / _currencyValue[i]) >= 1 && _currencyAmount[i] > 0)
                                 {
                                     //executes if changeDueRounded minus current index of currencyValue is positive or zero
                                     if ((changeDueRounded - _currencyValue[i]) >= 0)
@@ -415,16 +439,54 @@ namespace KioskProject
                                     changeDueRounded = Math.Round(changeDue, 2);
                                 }
                                 break;
-                            //default execution if previous case is not true
-                            default:
-                                //outputs to the console if there are not enough bill/money to pay customer's change
-                                Console.WriteLine("Error: the kiosk does not have enough physical money to supply your change.");
-                                Console.WriteLine("Please use another method of payment.");
-                                Console.WriteLine("Cancelling transaction...");
-                                return;
                         }
                     }
                 }
+
+                //checks if there is still change due to the customer after all money from the kiosk is exhausted
+                if (changeDueRounded > 0)
+                {
+                    changeDuePossible = false;
+
+                    //redeposits the cash dispensed for change back to the kiosk since full cash back compensation is not possible
+                    InitializeKioskInventory();
+
+                    Console.Clear();
+                    Console.WriteLine("Error: the kiosk does not have enough physical money to supply your change.");
+
+                    userInput = GetString("Would you like to proceed with transaction without receiving cash back? (yes/no): ");
+
+                    Console.Clear();
+
+                    //repeats while boolean repeat equals true
+                    do
+                    {
+                        //checks for valid input from the user
+                        switch (userInput)
+                        {
+                            case var expression when (userInput.ToLower() == "yes"):
+                                changeDue = 0;
+                                return changeDuePossible;
+                            case var expression when (userInput.ToLower() == "no"):
+                                Console.Clear();
+                                Console.WriteLine("Cancelling transaction...");
+                                Environment.Exit(-1);
+                                repeat = false;
+                                break;
+                            default:
+                                userInput = GetString("Please type a valid response. Would you like to proceed with transaction without receiving cash back? (yes/no): ");
+                                Console.Clear();
+                                repeat = true;
+                                break;
+                        }
+                    } while (repeat == true);
+                }
+                else
+                {
+                    changeDuePossible = true;
+                }
+
+                return changeDuePossible;
             }
 
             //gets a series of payments in bills/coins to pay the total expense on items
