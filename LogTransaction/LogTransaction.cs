@@ -6,20 +6,19 @@ namespace LogTransaction
     {
         static void Main(string[] args)
         {
-
-            //args = new string[] {"1", "6/2/2024", "5:54 PM", "0", "American Express", "3.99", "0" };
-
             //declare variables
+            DateTime transactionDate = DateTime.Now;
             int maxReportNumber;
             decimal cardPayment = 0;
             string transactionNumber = "";
-            DateTime transactionDate = DateTime.Now;
             string transactionTime = "";
             string cashPaymentAmount = "";
             string cardVendor = "";
             string cardPaymentAmount = "";
             string changeGiven = "";
-
+            string transactionFilePath = "C:\\Users\\Caleb\\Desktop\\Visual Studio Files\\" + transactionDate.ToString("MMM-dd-yy") + "-Transactions.log";
+            string transactionNumberFilePath = "C:\\Users\\Caleb\\Desktop\\Visual Studio Files\\TransactionNumber.log";
+            
             //runs if there are arguments passed to main
             if (args.Length > 0) 
             {
@@ -102,10 +101,9 @@ namespace LogTransaction
             }
 
             //declares the file paths for the transaction logs
-            string transactionFilePath = "C:\\Users\\Caleb\\Desktop\\Visual Studio Files\\" + transactionDate.ToString("MMM-dd-yy") + "-Transactions.log";
-            string transactionNumberFilePath = "C:\\Users\\Caleb\\Desktop\\Visual Studio Files\\TransactionNumber.log";
+            
 
-            //declares a string array to store contents of the file
+            //string array text is used only for the first transaction made because variable transactionNumber is always set to 1.
             string[] text = new string[]
             {
                 "\tTransaction Number: #" + transactionNumber,
@@ -179,6 +177,7 @@ namespace LogTransaction
                 Console.WriteLine("Appended " + maxReportNumber.ToString() + " to: " + transactionNumberFilePath);
 
                 //gives a string variable named attrib with the new maxReport number so it properly is displayed within the Transactions.log
+                //attrib will be used for every transaction after the first transaction because it uses the maxReportNumber for the transaction number
                 string attrib =
                 "\n\n\tTransaction Number: #" + maxReportNumber +
                 "\n\tTransaction Date: " + transactionDate.ToString("MMM-dd-yy") +
