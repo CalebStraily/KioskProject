@@ -14,12 +14,11 @@ namespace KioskProject
         public class Kiosk
         {
             //FIELDS
-            public DateTime _now;
-            public string _cardVendor;
-            public decimal _cashPayment;
-            public decimal _cardPayment;
-            public decimal _changeGiven;
-            
+            private DateTime _now;
+            private string _cardVendor;
+            private decimal _cashPayment;
+            private decimal _cardPayment;
+            private decimal _changeGiven;
             private int[] _currencyAmount;
             private string[] _currencyName;
             private decimal[] _currencyValue;
@@ -69,7 +68,6 @@ namespace KioskProject
                 do
                 {
                     //resets changePaymentMethod to false to loop properly
-
                     changePaymentMethod = false;
 
                     //will repeat while the card is not a valid value
@@ -77,15 +75,13 @@ namespace KioskProject
                     {
                         
                         digitCount = 0;
-                        
+
                         Console.Clear();
 
                         //prompts the user to enter their card number and stores the value
                         longUserInput = GetLong("Please enter your card number: ");
 
                         Console.Clear();
-
-                        
 
                         //counts how many digits the user's input is
                         for (long i = longUserInput; i > 0; i = i / 10)
@@ -101,7 +97,6 @@ namespace KioskProject
 
                         //sets the length of an integer array called userDigitsArray to the length of the userInput string value
                         int[] userDigitsArray = new int[userInput.Length];
-
 
                         //assigns each index of userDigitsArray to a character in userInput
                         for (int i = 0; i < userInput.Length; i++)
@@ -271,7 +266,6 @@ namespace KioskProject
 
                         userInput = Console.ReadLine();
 
-
                         Console.Clear();
 
                         //safety sets repeat variable to false so do while loop below functions properly
@@ -382,7 +376,6 @@ namespace KioskProject
 
                         changePaymentMethod = false;
                     }
-
                 } while (changePaymentMethod == true);
             }
 
@@ -422,7 +415,6 @@ namespace KioskProject
                                     changeDueRounded = Math.Round(changeDue, 2);
                                 }
                                 break;
-
                             //default execution if previous case is not true
                             default:
                                 //outputs to the console if there are not enough bill/money to pay customer's change
@@ -456,9 +448,7 @@ namespace KioskProject
                 //will get user input while there is still total remaining to pay
                 do
                 {
-
                     Console.Clear();
-
                     Console.WriteLine("Remaining: ${0:F2}", totalRemaining);
 
                     //gets a payment amount from the user
@@ -490,7 +480,6 @@ namespace KioskProject
                         if (validCurrencyValue == false)
                         {
                             Console.Clear();
-
                             Console.WriteLine("Please enter a valid currency value.");
                             Console.WriteLine("Remaining: ${0:F2}", totalRemaining);
 
@@ -509,6 +498,7 @@ namespace KioskProject
                 Console.WriteLine("Change Due: ${0:F2}", changeDue);
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
+                //calls a method to dispense change owed to the user
                 DispenseChange(changeDue, ref kiosk);
 
                 Console.ReadKey();
@@ -582,8 +572,6 @@ namespace KioskProject
                 //change given
                 string arg7 = _changeGiven.ToString();
 
-
-
                 //creates and starts a process to run the LogTransaction program with arguments
                 ProcessStartInfo startInfo = new ProcessStartInfo();
                 startInfo.FileName = @"C:\Users\Caleb\source\repos\KioskProject\LogTransaction\bin\Debug\net8.0\LogTransaction.exe";
@@ -635,7 +623,7 @@ namespace KioskProject
                 return decimal.Parse(userInput);
             }
 
-            //validates user input of long type variables
+            //validates user input of long type variables. in this program, card numbers are the only long variable being validated.
             public long GetLong(string dataRequest)
             {
                 string userInput = "";
