@@ -44,7 +44,7 @@ namespace KioskProject
                 //repeat the length of int array currencyAmount
                 for (int i = 0; i < _currencyAmount.Length; i++)
                 {
-                    _currencyAmount[i] = 5;
+                    _currencyAmount[i] = 1;
                 }
             }
 
@@ -357,7 +357,7 @@ namespace KioskProject
 
                         Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                         
-                        //sets a boolean variable to true or false depending on if the kiosk has can credit change due to the customer
+                        //sets a boolean variable to true or false depending on if the kiosk can credit change due to the customer
                         changeDuePossible = DispenseChange(cashBack, ref kiosk);
 
                         //sets cashBack and _changeGiven back to zero if crediting change due is not possible
@@ -499,6 +499,7 @@ namespace KioskProject
                 int count = 1;
                 int arrayIteration = 0;
                 bool validCurrencyValue = false;
+                bool changeDuePossible;
 
                 //sets the payment in cash to totalCost and sets card payment to zero since transaction is in cash only
                 kiosk._cashPayment = totalCost;
@@ -561,10 +562,22 @@ namespace KioskProject
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
                 //calls a method to dispense change owed to the user
-                DispenseChange(changeDue, ref kiosk);
+                changeDuePossible = DispenseChange(changeDue, ref kiosk);
 
-                Console.ReadKey();
-                Console.Clear();
+                //outputs to the console if the kiosk was not able to dispense the change due
+                if (changeDuePossible == false)
+                {
+                    Console.WriteLine("No bills were dispensed. Proceeding with transaction...");
+                    Console.ReadKey();
+                    Console.Clear();
+
+                    _changeGiven = 0;
+                }
+                else
+                {
+                    Console.ReadKey();
+                    Console.Clear();
+                }
             }
 
             //simulates a request for funds from a banking account
@@ -704,11 +717,11 @@ namespace KioskProject
 
                     userInput = Console.ReadLine();
 
-                    tester = double.TryParse(userInput, out _);
+                    tester = long.TryParse(userInput, out _);
 
                     if (tester)
                     {
-                        if (decimal.Parse(userInput) < 0)
+                        if (long.Parse(userInput) < 0)
                         {
                             tester = false;
                         }
