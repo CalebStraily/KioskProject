@@ -44,7 +44,7 @@ namespace KioskProject
                 //repeat the length of int array currencyAmount
                 for (int i = 0; i < _currencyAmount.Length; i++)
                 {
-                    _currencyAmount[i] = 1;
+                    _currencyAmount[i] = 5;
                 }
             }
 
@@ -61,7 +61,6 @@ namespace KioskProject
                 decimal cashBack = 0;
                 bool validCard = false;
                 bool repeat = false;
-                bool wantsCashBack = false;
                 bool changePaymentMethod = false;
 
                 //will repeat while the user wants to change payment method
@@ -226,12 +225,10 @@ namespace KioskProject
                             case var expression when (userInput.ToLower() == "yes"):
                                 cashBack = GetDecimal("Please enter the amount you want on cash back: $");
                                 Console.Clear();
-                                wantsCashBack = true;
                                 repeat = false;
                                 break;
                             case var expression when (userInput.ToLower() == "no"):
                                 repeat = false;
-                                wantsCashBack = false;
                                 break;
                             default:
                                 userInput = GetString("Please type a valid response. Do you want cash back (yes/no): ");
@@ -253,16 +250,16 @@ namespace KioskProject
                     string accountNumberResult = transactionResult[0];
                     string transactionResultMessage = transactionResult[1];
 
-                    //executes if the value at index 1 of transactionResult is declined case-insensitive AND the user does not want cash back
-                    if (transactionResult[1].ToLower() == "declined" && wantsCashBack == false)
+                    //executes if the value at index 1 of transactionResult is declined case-insensitive
+                    if (transactionResult[1].ToLower() == "declined")
                     {
                         Console.WriteLine("Card declined.");
                         Console.WriteLine("Remaining Balance: ");
                         Console.WriteLine("~~~~~~~~~~~~~~~~~~~");
                         Console.WriteLine("${0:F2}", totalCost);
                         Console.WriteLine();
-                        Console.WriteLine("Would you like to change payment, pay the remaining in cash, or cancel the order? \n" +
-                                          "Please enter 'change', 'cash', or 'cancel' to proceed.");
+                        Console.WriteLine("Would you like to try a different card, pay the remaining in cash, or cancel the order? \n" +
+                                          "Please enter 'card', 'cash', or 'cancel' to proceed.");
 
                         userInput = Console.ReadLine();
 
@@ -280,7 +277,7 @@ namespace KioskProject
                             switch (userInput)
                             {
                                 //will break out of the loop so that the code will execute back to where the user was prompted to enter their card number
-                                case var expression when (userInput.ToLower() == "change"):
+                                case var expression when (userInput.ToLower() == "card"):
                                     repeat = false;
                                     changePaymentMethod = true;
                                     break;
@@ -297,56 +294,14 @@ namespace KioskProject
                                     break;
                                 //defaults if input was not valid
                                 default:
-                                    userInput = GetString("Please enter a valid input (change/cash/cancel): ");
+                                    userInput = GetString("Please enter a valid input (card/cash/cancel): ");
                                     repeat = true;
                                     Console.Clear();
                                     break;
                             }
                         } while (repeat == true);
                     }
-                    //executes if the value at index 1 of transactionResult is declined case in-sensitive AND the user does want cash back 
-                    else if (transactionResult[1].ToLower() == "declined" && wantsCashBack == true)
-                    {
-                        Console.WriteLine("Card declined.");
-                        Console.WriteLine("Remaining Balance: ");
-                        Console.WriteLine("~~~~~~~~~~~~~~~~~~~");
-                        Console.WriteLine("${0:F2}", totalCost);
-                        Console.WriteLine();
-                        Console.WriteLine("Would you like to change payment method or cancel the order? \n" +
-                                          "Please enter 'change' or 'cancel' to proceed.");
-                        userInput = Console.ReadLine();
 
-                        repeat = false;
-
-                        //repeats while boolean repeat is true
-                        do
-                        {
-                            repeat = false;
-
-                            //validates user input
-                            switch (userInput)
-                            {
-                                //executes if the user wants to change payment method
-                                case var expression when (userInput.ToLower() == "change"):
-                                    repeat = false;
-                                    changePaymentMethod = true;
-                                    Console.Clear();
-                                    break;
-                                //executes if the user want to cancel payment
-                                case var expression when (userInput.ToLower() == "cancel"):
-                                    Console.Clear();
-                                    System.Environment.Exit(-1);
-                                    return;
-                                //executes if the user's input was invalid
-                                default:
-                                    userInput = GetString("Please enter a valid input (change/cancel): ");
-                                    repeat = true;
-                                    Console.Clear();
-                                    break;
-                            }
-                            //repeats while user input is not 'retry' or 'cash'
-                        } while (repeat == true);
-                    }
                     //executes if the user's card payment is accepted
                     else
                     {
@@ -587,8 +542,14 @@ namespace KioskProject
                 //50% CHANCE TRANSACTION PASSES OR FAILS
                 bool pass = rnd.Next(100) < 50;
 
-                //50% CHANCE THAT A FAILED TRANSACTION IS DECLINEED
+                //50% CHANCE THAT A FAILED TRANSACTION IS DECLINED
                 bool declined = rnd.Next(100) < 50;
+
+                //****TESTING FOR CARD DECLINES. PLEASE COMMENT OUT WHEN MAKING COMMITS****
+                /*
+                pass = false;
+                declined = true;
+                */
 
                 if (pass)
                 {
